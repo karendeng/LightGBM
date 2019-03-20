@@ -41,6 +41,7 @@ for mod_name in MOCK_MODULES:
 # -- General configuration ------------------------------------------------
 
 os.environ['LIGHTGBM_BUILD_DOC'] = '1'
+C_API = not (os.environ.get('C_API', '') == 'NO')
 
 # If your documentation needs a minimal Sphinx version, state it here.
 needs_sphinx = '1.3'  # Due to sphinx.ext.napoleon
@@ -103,6 +104,31 @@ todo_include_todos = False
 # Both the class' and the __init__ method's docstring are concatenated and inserted.
 autoclass_content = 'both'
 
+# -- Configuration for C API docs generation ------------------------------
+
+if C_API:
+    extensions.extend([
+        'breathe',
+        'exhale'
+    ])
+
+    breathe_projects = {
+        "LightGBM": "./doxyoutput/xml"
+    }
+    breathe_default_project = "LightGBM"
+
+    exhale_args = {
+        "containmentFolder": "./c_api",
+        "rootFileName": "C_API.rst",
+        "rootFileTitle": "C API",
+        "fullApiSubSectionTitle": "C API",
+        "doxygenStripFromPath": "..",
+        "exhaleExecutesDoxygen": True,
+        "exhaleDoxygenStdin": """INPUT = ../include/LightGBM/c_api.h""",
+        "fullToctreeMaxDepth": 1,
+        "contentsDirectives": False,
+    }
+
 # -- Options for HTML output ----------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
@@ -125,6 +151,8 @@ html_static_path = ['_static']
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'LightGBMdoc'
+
+# -- Options for HTML output ----------------------------------------------
 
 
 def setup(app):
